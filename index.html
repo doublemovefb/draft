@@ -1,0 +1,68 @@
+import pandas as pd
+
+def create_rb_scouting_template():
+    """
+    Creates a detailed template for RB scouting with categories and attributes.
+    Returns the template as a pandas DataFrame.
+    """
+    categories = {
+        "Physical Attributes": ["Speed", "Agility", "Power", "Balance"],
+        "Vision and Decision-Making": ["Field Vision", "Patience", "Cutting Ability", "Football IQ"],
+        "Running Style and Technique": ["Burst", "Footwork", "Contact Balance", "Ball Security"],
+        "Versatility and Role": ["Receiving Ability", "Pass Protection", "Special Teams Contribution", "Scheme Fit"],
+        "Game Performance and Intangibles": ["Durability", "Clutch Performance", "Effort and Toughness", "Leadership and Character"]
+    }
+
+    category_weights = {
+        "Physical Attributes": 15,
+        "Vision and Decision-Making": 25,
+        "Running Style and Technique": 20,
+        "Versatility and Role": 15,
+        "Game Performance and Intangibles": 25
+    }
+
+    detailed_template = []
+    for category, attributes in categories.items():
+        weight_per_attribute = category_weights[category] / len(attributes)
+        for attribute in attributes:
+            detailed_template.append({
+                "Category": category,
+                "Attribute": attribute,
+                "Grade out of 10": None,
+                "Weight (%)": weight_per_attribute,
+                "Final Contribution": None
+            })
+
+    return pd.DataFrame(detailed_template)
+
+def calculate_final_grade(df):
+    """
+    Calculates the final grade based on the grades and weights in the DataFrame.
+
+    Parameters:
+        df (pd.DataFrame): DataFrame containing attributes, grades, and weights.
+
+    Returns:
+        float: Final scouting grade out of 100.
+    """
+    df = df.copy()
+    df["Final Contribution"] = (df["Grade out of 10"] / 10) * df["Weight (%)"]
+    return df["Final Contribution"].sum()
+
+# Example usage
+if __name__ == "__main__":
+    # Create the template
+    template = create_rb_scouting_template()
+
+    # Example: Fill in some grades (user input would replace this part)
+    template.loc[template["Attribute"] == "Speed", "Grade out of 10"] = 8
+    template.loc[template["Attribute"] == "Agility", "Grade out of 10"] = 9
+    template.loc[template["Attribute"] == "Power", "Grade out of 10"] = 7
+    template.loc[template["Attribute"] == "Balance", "Grade out of 10"] = 8
+
+    # Calculate final grade
+    final_grade = calculate_final_grade(template)
+
+    # Display results
+    print("Final Grade:", final_grade)
+    print(template)
