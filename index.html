@@ -1,68 +1,119 @@
-import pandas as pd
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RB Scouting Grader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #007acc;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #007acc;
+        }
+        .grade-input {
+            margin-bottom: 15px;
+        }
+        .grade-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .grade-input input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #007acc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #005f99;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>RB Scouting Grader</h1>
+    </header>
+    <div class="container">
+        <h2>Input Grades</h2>
+        <div id="grades-form">
+            <!-- Grades for Physical Attributes -->
+            <div class="grade-input">
+                <label for="speed">Speed (out of 10):</label>
+                <input type="number" id="speed" max="10" min="0">
+            </div>
+            <div class="grade-input">
+                <label for="agility">Agility (out of 10):</label>
+                <input type="number" id="agility" max="10" min="0">
+            </div>
+            <div class="grade-input">
+                <label for="power">Power (out of 10):</label>
+                <input type="number" id="power" max="10" min="0">
+            </div>
+            <div class="grade-input">
+                <label for="balance">Balance (out of 10):</label>
+                <input type="number" id="balance" max="10" min="0">
+            </div>
+            <!-- Add more categories as needed -->
+            <button onclick="calculateGrade()">Calculate Final Grade</button>
+        </div>
+        <div id="result" class="result"></div>
+    </div>
 
-def create_rb_scouting_template():
-    """
-    Creates a detailed template for RB scouting with categories and attributes.
-    Returns the template as a pandas DataFrame.
-    """
-    categories = {
-        "Physical Attributes": ["Speed", "Agility", "Power", "Balance"],
-        "Vision and Decision-Making": ["Field Vision", "Patience", "Cutting Ability", "Football IQ"],
-        "Running Style and Technique": ["Burst", "Footwork", "Contact Balance", "Ball Security"],
-        "Versatility and Role": ["Receiving Ability", "Pass Protection", "Special Teams Contribution", "Scheme Fit"],
-        "Game Performance and Intangibles": ["Durability", "Clutch Performance", "Effort and Toughness", "Leadership and Character"]
-    }
+    <script>
+        function calculateGrade() {
+            // Define weights for each category
+            const weights = {
+                "Physical Attributes": 15
+            };
 
-    category_weights = {
-        "Physical Attributes": 15,
-        "Vision and Decision-Making": 25,
-        "Running Style and Technique": 20,
-        "Versatility and Role": 15,
-        "Game Performance and Intangibles": 25
-    }
+            // Collect grades
+            const speed = parseFloat(document.getElementById('speed').value) || 0;
+            const agility = parseFloat(document.getElementById('agility').value) || 0;
+            const power = parseFloat(document.getElementById('power').value) || 0;
+            const balance = parseFloat(document.getElementById('balance').value) || 0;
 
-    detailed_template = []
-    for category, attributes in categories.items():
-        weight_per_attribute = category_weights[category] / len(attributes)
-        for attribute in attributes:
-            detailed_template.append({
-                "Category": category,
-                "Attribute": attribute,
-                "Grade out of 10": None,
-                "Weight (%)": weight_per_attribute,
-                "Final Contribution": None
-            })
+            // Calculate average for Physical Attributes
+            const physicalAttributes = (speed + agility + power + balance) / 4;
 
-    return pd.DataFrame(detailed_template)
+            // Final grade calculation
+            const finalGrade = (physicalAttributes / 10) * weights["Physical Attributes"];
 
-def calculate_final_grade(df):
-    """
-    Calculates the final grade based on the grades and weights in the DataFrame.
-
-    Parameters:
-        df (pd.DataFrame): DataFrame containing attributes, grades, and weights.
-
-    Returns:
-        float: Final scouting grade out of 100.
-    """
-    df = df.copy()
-    df["Final Contribution"] = (df["Grade out of 10"] / 10) * df["Weight (%)"]
-    return df["Final Contribution"].sum()
-
-# Example usage
-if __name__ == "__main__":
-    # Create the template
-    template = create_rb_scouting_template()
-
-    # Example: Fill in some grades (user input would replace this part)
-    template.loc[template["Attribute"] == "Speed", "Grade out of 10"] = 8
-    template.loc[template["Attribute"] == "Agility", "Grade out of 10"] = 9
-    template.loc[template["Attribute"] == "Power", "Grade out of 10"] = 7
-    template.loc[template["Attribute"] == "Balance", "Grade out of 10"] = 8
-
-    # Calculate final grade
-    final_grade = calculate_final_grade(template)
-
-    # Display results
-    print("Final Grade:", final_grade)
-    print(template)
+            // Display result
+            document.getElementById('result').innerText = `Final Grade: ${finalGrade.toFixed(2)} / 100`;
+        }
+    </script>
+</body>
+</html>
